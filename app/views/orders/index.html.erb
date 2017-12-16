@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Orders</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Origin</th>
+      <th>Destination</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><%= order.origin %></td>
+        <td><%= order.destination %></td>
+        <td><%= order.distance %></td>
+        <td><%= order.est_price %></td>
+        <td><%= order.status %></td>
+        <td><%= link_to 'Show', order_path(order.id) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Order', new_order_path %>

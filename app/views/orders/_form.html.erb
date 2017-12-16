@@ -1,0 +1,37 @@
+<%= form_with(model: order, local: true) do |f|%>
+  <% if order.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(order.errors.count, "error") %> prohibited this order from being saved:</h2>
+
+      <ul>
+      <% order.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :origin %>
+    <%= f.text_field :origin, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :destination %>
+    <%= f.text_field :destination, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :type_id %>
+    <%= f.collection_select :type_id, Type.order(:name), :id, :name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :payment_type %>
+    <%= f.select(:payment_type, options_for_select([["Cash", "Cash"], ["Go-Pay", "Go-Pay"]])) %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit("Order", class: "btn btn-default") %>
+  </div>
+<% end %>
