@@ -45,7 +45,7 @@ RSpec.describe Type, type: :model do
       @type = create(:type)
     end
     # it { should have_many(:drivers) }
-    # it { should have_many(:orders) }
+    it { should have_many(:orders) }
     # it 'should have many drivers' do
     #   driver1 = create(:driver, type: @type)
     #   driver2 = create(:driver, type: @type)

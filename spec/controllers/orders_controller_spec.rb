@@ -13,23 +13,51 @@ RSpec.describe OrdersController, type: :controller do
   let(:valid_session) { {user_id: user.id} }
 
   describe "GET #index" do
+    before { get :index, params: {}, session: valid_session }
+
     it "returns a success response" do
-      get :index, params: {}, session: valid_session
       expect(response).to be_success
+    end
+
+    it 'populates an array of all orders' do
+      expect(assigns(:orders)).to match_array([order])
+    end
+
+    it 'renders the :index template' do
+      expect(response).to render_template(:index)
     end
   end
 
   describe "GET #show" do
+    before { get :show, params: {id: order.to_param}, session: valid_session}
+
     it "returns a success response" do
-      get :show, params: {id: order.to_param}, session: valid_session
       expect(response).to be_success
+    end
+
+    it 'assigns the requested order to @order' do
+      expect(assigns(:order)).to eq(order)
+    end
+
+    it 'renders the :show template' do
+      expect(response).to render_template(:show)
     end
   end
 
   describe "GET #new" do
+    before { get :new, params: {}, session: valid_session }
+
     it "returns a success response" do
-      get :new, params: {}, session: valid_session
       expect(response).to be_success
+    end
+
+    it 'assigns a new Order to @order' do
+      expect(assigns(:order)).to be_a_new(Order)
+    end
+
+    it 'renders the :new template' do
+      get :new
+      expect(response).to render_template(:new)
     end
   end
 
@@ -48,9 +76,20 @@ RSpec.describe OrdersController, type: :controller do
     end
 
     context "with invalid params" do
+      it 'does not save the new order in the database' do
+        expect{
+          post :create, params: {order: invalid_attributes}, session: valid_session
+        }.not_to change(Order, :count)
+      end
+
       it "returns a success response (i.e. to display the 'new' template)" do
         post :create, params: {order: invalid_attributes}, session: valid_session
         expect(response).to be_success
+      end
+
+      it 're-renders the :new template' do
+        post :create, params: {order: invalid_attributes}, session: valid_session
+        expect(response).to render_template(:new)
       end
     end
   end
@@ -77,6 +116,12 @@ RSpec.describe OrdersController, type: :controller do
       it "returns a success response (i.e. to display the 'edit' template)" do
         put :update, params: {id: order.to_param, order: invalid_attributes}, session: valid_session
         expect(response).to be_success
+      end
+
+      it "does not change order's attributes" do
+        put :update, params: {id: order.to_param, order: invalid_attributes}, session: valid_session
+        order.reload
+        expect(order.status).not_to eq('D')
       end
     end
   end

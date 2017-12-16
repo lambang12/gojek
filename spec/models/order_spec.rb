@@ -61,10 +61,10 @@ RSpec.describe Order, type: :model do
     expect(order.errors[:destination]).to include("distance cannot exceed 25 km")
   end
 
-  # it 'saves order with initial driver nil' do
-  #   order = create(:order)
-  #   expect(order.driver_id).to be_nil
-  # end
+  it 'saves order with initial driver nil' do
+    order = create(:order)
+    expect(order.driver_id).to be_nil
+  end
 
   describe 'storing latitudes and longitudes' do
     context 'with valid address' do

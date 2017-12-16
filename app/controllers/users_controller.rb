@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  skip_before_action :authorize, only: [:new, :create]
+  before_action :new_user_only, only: [:new, :create] 
   before_action :set_user, only: [:index, :edit, :update, :destroy]
 
   def index
@@ -52,5 +54,11 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:email, :phone, :first_name, :last_name, :password, :password_confirmation)
+    end
+
+    def new_user_only
+      if session[:user_id]
+        redirect_to index_path, notice: 'Please logout first'
+      end
     end
 end

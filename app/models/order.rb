@@ -14,7 +14,7 @@ class Order < ApplicationRecord
   belongs_to :type
   belongs_to :driver, optional: true
 
-  before_validation :set_base_attributes, :set_calculation_attributes, if: :new_record?
+  before_validation :set_base_attributes, :set_calculation_attributes, if: :is_new?
 
   validates :origin, :destination, :payment_type, presence: true
   validate :destination_must_be_different_than_origin
@@ -22,7 +22,7 @@ class Order < ApplicationRecord
   validate :distance_cannot_exceed_max_allowed, :distance_matrix_valid
 
   private
-    def new_record?
+    def is_new?
       self.id.nil?
     end
 
