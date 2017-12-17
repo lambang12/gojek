@@ -27,4 +27,10 @@ RSpec.describe OrderDecorator, :type => [:decorator, :helper] do
       expect(decorator.idr_fare).to eq("Rp 1.500,00")
     end
   end
+
+  describe '.order_date' do
+    it 'should return created date month name and year' do
+      expect(decorator.order_date).to eq(order.created_at.strftime("%d %B %Y"))
+    end
+  end
 end

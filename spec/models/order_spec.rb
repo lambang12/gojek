@@ -52,7 +52,7 @@ RSpec.describe Order, type: :model do
 
   it 'saves order with initial status (initialized)' do
     order = create(:order)
-    expect(order.status).to eq('initialized')
+    expect(order.status).to eq('Initialized')
   end
 
   it 'is invalid with distance > 25 km' do

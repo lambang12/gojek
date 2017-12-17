@@ -10,7 +10,7 @@ RSpec.describe UsersController, type: :controller do
     attributes_for(:invalid_user)
   }
 
-  let(:valid_session) { {user_id: user.id} }
+  let(:valid_session) { {gojek_user_id: user.id} }
 
   describe "GET #index" do
     context 'with valid session' do

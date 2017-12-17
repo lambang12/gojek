@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GopayController, type: :controller do
-  let(:valid_session) { {user_id: user.id} }
+  let(:valid_session) { {gojek_user_id: user.id} }
   let!(:user) { create(:user) }
 
   # how to test with database test in go??

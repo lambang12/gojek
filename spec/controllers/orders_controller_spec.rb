@@ -10,7 +10,7 @@ RSpec.describe OrdersController, type: :controller do
   let!(:order) { create(:order, user: user) }
   let(:order_id) { order.id }
 
-  let(:valid_session) { {user_id: user.id} }
+  let(:valid_session) { {gojek_user_id: user.id} }
 
   describe "GET #index" do
     before { get :index, params: {}, session: valid_session }
@@ -97,13 +97,13 @@ RSpec.describe OrdersController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        attributes_for(:order, status: 'D')
+        attributes_for(:order, status: 'Driver Assigned')
       }
 
       it "updates the requested order" do
         put :update, params: {id: order.to_param, order: new_attributes}, session: valid_session
         order.reload
-        expect(order.status).to eq('D')
+        expect(order.status).to eq('Driver Assigned')
       end
 
       it "redirects to the order" do

@@ -32,7 +32,7 @@ describe UserDecorator do
 
   describe '.joined_at' do
     it 'should return created month name and year' do
-      expect(decorator.joined_at).to eq(created_at.strftime("%B %Y"))
+      expect(decorator.joined_at).to eq(user.created_at.strftime("%B %Y"))
     end
   end
 end

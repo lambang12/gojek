@@ -30,4 +30,17 @@ module MessagingService
       raise
     end
   end
+
+  def self.produce_user(user)
+    topic = "#{RdKafka::TOPIC_PREFIX}users"
+    producer = RdKafka.producer({ "group.id": "users0" })
+
+    message = user.to_json
+    puts "Producing message #{message}"
+    producer.produce(
+        topic:   topic,
+        payload: message,
+        key:     "Key #{user.id}"
+    ).wait
+  end
 end

@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
 
   def index
-    @orders = Order.all.decorate
+    @orders = @current_user.orders.all.decorate
   end
 
   def show
@@ -50,7 +50,7 @@ class OrdersController < ApplicationController
 
   private
     def set_order
-      @order = Order.find(params[:id]).decorate
+      @order = @current_user.orders.find(params[:id]).decorate
     end
 
     def order_params

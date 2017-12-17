@@ -1,4 +1,6 @@
 module AllocationService
+  BASE_URI = 'http://localhost:3001/'
+
   def self.allocate_driver_to_order(params)
     order = Order.find(params["order_id"])
     if params["status"] == 'OK'
@@ -7,5 +9,13 @@ module AllocationService
     else
       order.update(status: 'C')
     end
+  end
+
+  def self.update_order(params)
+    opts =  {
+      body: params
+    }
+    response = HTTParty.put("#{BASE_URI}orders", opts)
+    RequestResponse.json_to_hash(response)
   end
 end

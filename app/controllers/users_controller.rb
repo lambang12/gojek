@@ -18,6 +18,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        MessagingService.produce_user(@user)
         format.html { redirect_to login_path, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
       else
@@ -57,7 +58,7 @@ class UsersController < ApplicationController
     end
 
     def new_user_only
-      if session[:user_id]
+      if session[:gojek_user_id]
         redirect_to index_path, notice: 'Please logout first'
       end
     end

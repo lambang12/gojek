@@ -67,7 +67,7 @@ describe User do
 
   it 'saves names in capitalized case' do
     user = create(:user, first_name: 'ajeng')
-    expect(user.first_name).to be('Ajeng')
+    expect(user.first_name).to eq('Ajeng')
   end
 
   context 'on a new user' do

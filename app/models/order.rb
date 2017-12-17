@@ -1,8 +1,9 @@
 class Order < ApplicationRecord
   enum status: {
-    "Initialized" => "Waiting for Driver",
+    "Initialized" => "Initialized",
     "Driver Assigned" => "Driver Assigned",
-    "Cancelled by System" => "Cancelled by System"
+    "Cancelled by System" => "Cancelled by System",
+    "Finished" => "Finished"
   }
 
   enum payment_type: {
