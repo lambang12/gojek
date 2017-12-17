@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
 
   def index
-    @orders = Order.all
+    @orders = Order.all.decorate
   end
 
   def show
@@ -19,7 +19,7 @@ class OrdersController < ApplicationController
     respond_to do |format|
       if @order.save
         MessagingService.produce_order(@order)
-        format.html { redirect_to @order, notice: 'Order was successfully created.' }
+        format.html { redirect_to @order.decorate, notice: 'Order was successfully created.' }
         format.json { render :show, status: :created, location: @order }
       else
         format.html { render :new }
@@ -50,7 +50,7 @@ class OrdersController < ApplicationController
 
   private
     def set_order
-      @order = Order.find(params[:id])
+      @order = Order.find(params[:id]).decorate
     end
 
     def order_params

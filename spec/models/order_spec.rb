@@ -50,9 +50,9 @@ RSpec.describe Order, type: :model do
     expect(order.est_price).to eq(order.distance * order.base_fare)
   end
 
-  it 'saves order with initial status I (initialized)' do
+  it 'saves order with initial status (initialized)' do
     order = create(:order)
-    expect(order.status).to eq('I')
+    expect(order.status).to eq('initialized')
   end
 
   it 'is invalid with distance > 25 km' do

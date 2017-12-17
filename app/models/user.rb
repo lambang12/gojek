@@ -12,4 +12,11 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 8 }, allow_blank: true
   validates :gopay, numericality: { greater_than_or_equal_to: 0 }
 
+  before_save :capitalize_names
+
+  private
+    def capitalize_names
+      first_name.capitalize!
+      last_name.capitalize!
+    end
 end

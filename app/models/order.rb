@@ -1,9 +1,10 @@
 class Order < ApplicationRecord
   enum status: {
-    "I" => "Initialized",
-    "D" => "Driver Assigned",
-    "C" => "Cancelled by System"
+    "Initialized" => "Waiting for Driver",
+    "Driver Assigned" => "Driver Assigned",
+    "Cancelled by System" => "Cancelled by System"
   }
+
   enum payment_type: {
     "Cash" => "Cash",
     "Go Pay" => "Go Pay",
@@ -14,20 +15,22 @@ class Order < ApplicationRecord
   belongs_to :type
   belongs_to :driver, optional: true
 
-  before_validation :set_base_attributes, :set_calculation_attributes, if: :is_new?
+  before_validation :set_base_attributes, :set_calculation_attributes, if: :new_record?
 
   validates :origin, :destination, :payment_type, presence: true
   validate :destination_must_be_different_than_origin
   validate :locations_must_exist
   validate :distance_cannot_exceed_max_allowed, :distance_matrix_valid
+  before_save :capitalize_names
 
   private
-    def is_new?
-      self.id.nil?
+    def capitalize_names
+      origin.capitalize!
+      destination.capitalize!
     end
 
     def set_base_attributes
-      self.status = 'I'
+      self.status = "Initialized"
       self.base_fare = type.base_fare unless type.nil?
 
       origin_coordinates = Gmaps.to_coordinates(origin) unless origin.nil? || origin.empty?

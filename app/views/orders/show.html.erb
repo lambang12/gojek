@@ -1,13 +1,39 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Origin:</strong>
-  <%= @order.origin %>
-</p>
+<div class="panel panel-success">
+  <div class="panel-heading">Order History</div>
+  <div class="panel-body">
+    <table class="table">
+      <tr>
+        <th>Order Date</th>
+        <td><%= @order.order_date %></td>
+        <th>Payment Type</th>
+        <td><%= @order.payment_type %></td>
+      </tr>
+      <tr>
+        <th>Origin</th>
+        <td><%= @order.origin %></td>
+        <th>Price</th>
+        <td><%= @order.idr_price %></td>
+      </tr>
+      <tr>
+        <th>Destination</th>
+        <td><%= @order.destination %></td>
+        <th>Status</th>
+        <td><%= @order.status %></td>
+      </tr>
+      <tr>
+        <th>Distance</th>
+        <td><%= @order.distance_in_km %></td>
+        <th>Driver</th>
+        <td><%= %></td>
+      </tr>
+    </table>
+    <%= link_to 'Back', orders_path, class: "btn btn-success" %>
+  </div>
+</div>
 
-<p>
-  <strong>Destination:</strong>
-  <%= @order.destination %>
-</p>
-
-<%= link_to 'Back', orders_path %>
+<div>
+  <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=640x400&path=enc%3Ahbwd@ug_kSoFb@cCVsAJBbC@fALx@Ar@zFIxACnCAdEDfA?hCLt@@vABpJ?pARfAJbACj@YXE`CEtHEV?b@GLGj@WJM\\Q`@G`@BLBTLPNJPHb@?ZEXMTOPUJUDc@BIAG?kA^StCGvAAr@^Z?ZCx@@JVjA?t@Eh@KPEL?NDNLHRDt@JpDCHIIgFSm@MOUIU?{@Pq@@SDSNKTC^BJBH@d@&key=AIzaSyDBu0E_x067mvWLpmOSdRsnhYL9euWiczk",
+      class: 'img-fluid img-rounded', alt: " on the map"%>
+</div>

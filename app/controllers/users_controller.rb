@@ -49,7 +49,7 @@ class UsersController < ApplicationController
 
   private
     def set_user
-      @user = @current_user
+      @user = @current_user.decorate
     end
 
     def user_params
