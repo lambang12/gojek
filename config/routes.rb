@@ -18,5 +18,10 @@ Rails.application.routes.draw do
     delete 'logout' => :destroy
   end
 
+  controller :gopay do
+    get 'gopay/register' => :new
+    post 'gopay/register' => :create
+  end
+
   root 'dashboard#index', as: 'index'
 end
