@@ -14,6 +14,6 @@ class OrderDecorator < Draper::Decorator
   end
 
   def order_date
-    created_at.strftime("%d %B %Y")
+    created_at.strftime("%d %B %Y %H:%M:%S")
   end
 end

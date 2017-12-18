@@ -10,7 +10,11 @@ class RdKafka
   TOPIC_PREFIX = "xz6befqu-"
 
   def self.consumer(params)
-    config = CONFIG.merge(params)
+    consumer_config = {
+      :"auto.offset.reset" => "earliest"
+    }
+    config = CONFIG.merge(consumer_config)
+    config = config.merge(params)
     rdkafka = Rdkafka::Config.new(config)
     rdkafka.consumer
   end

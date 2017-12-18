@@ -28,7 +28,7 @@
 
   <div class="form-group">
     <%= f.label :payment_type %>
-    <%= f.select :payment_type, Order.payment_types.keys, prompt: 'Select a payment type', class: "form-control"  %>
+    <%= f.select :payment_type, Order.payment_types.keys, {}, class: "form-control"  %>
   </div>
 
   <div class="actions">
