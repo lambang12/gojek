@@ -19,11 +19,11 @@ Type.create!(
 )
 
 
-User.create!(
-  email: "ajeng@gmail.com", 
-  first_name: "ajeng", 
-  last_name: "sugiarti", 
-  password: 'password', 
-  password_confirmation:'password',
-  phone:'0811'
-)
+# User.create!(
+#   email: "ajeng@gmail.com", 
+#   first_name: "ajeng", 
+#   last_name: "sugiarti", 
+#   password: 'password', 
+#   password_confirmation:'password',
+#   phone:'0811'
+# )

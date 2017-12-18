@@ -87,4 +87,8 @@ RSpec.describe Order, type: :model do
       end
     end
   end
+
+  describe 'using Go-Pay' do
+    skip
+  end
 end

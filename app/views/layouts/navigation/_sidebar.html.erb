@@ -9,7 +9,7 @@
         <p>
           <%= link_to "#{@current_user.full_name}", user_path %>
         </p>
-        <p><span class="glyphicon glyphicon-credit-card"></span> <%= @current_user.gopay %></p>
+        <p><span class="glyphicon glyphicon-credit-card"></span> <%= @current_user.idr_gopay %></p>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
         <%= link_to "Order", new_order_path %>
       </li>
       <li>
-        <%= link_to "Go-Pay", gopay_register_path %>
+        <%= link_to "Go-Pay", topup_path %>
       </li>
       <li><%= link_to "Order History", orders_path %></li>
     </ul>

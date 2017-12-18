@@ -18,7 +18,7 @@ module MessagingService
     topic = "#{RdKafka::TOPIC_PREFIX}allocated-drivers"
     consumer = RdKafka.consumer({ "group.id": "drivers-consumer1" })
 
-    puts 'consume allocation'
+    puts "consume #{topic}"
     consumer.subscribe(topic)
 
     begin

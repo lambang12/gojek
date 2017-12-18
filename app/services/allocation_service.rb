@@ -8,7 +8,13 @@ module AllocationService
       driver = Driver.find_or_create_by(external_id: params["driver"]["id"], full_name: params["driver"]["first_name"])
       order.update(status: 'Driver Assigned', driver: driver)
     else
+      if order.payment_type == 'Go-Pay'
+        response = GopayService.topup(order.user, order.est_price)
+      end
+      puts order.status
       order.update(status: 'Cancelled by System')
+      order.reload
+      puts order.status
     end
   end
 
@@ -38,6 +44,10 @@ module AllocationService
       order.reload
       if order.status == "Initialized"
         order.update(status: 'Cancelled by System')
+        if order.payment_type == 'Go-Pay'
+          puts "Cancelled #{order.id} #{order.user.first_name}"
+          response = GopayService.topup(order.user, order.est_price)
+        end
         MessagingService.produce_order_cancellation(order)
       end
     end

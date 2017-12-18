@@ -16,8 +16,14 @@ class OrdersController < ApplicationController
     @order = Order.new(order_params)
     @order.user = @current_user
 
+    # TODO if insufficient amount of gopay?????????
+    
+
     respond_to do |format|
       if @order.save
+        if @order.payment_type == "Go-Pay"
+          pay_with_gopay
+        end
         MessagingService.produce_order(@order)
         format.html { redirect_to @order.decorate, notice: 'Order was successfully created.' }
         format.json { render :show, status: :created, location: @order }
@@ -55,5 +61,21 @@ class OrdersController < ApplicationController
 
     def order_params
       params.require(:order).permit(:origin, :destination, :type_id, :payment_type, :status)
+    end
+
+    def pay_with_gopay
+      # if @order.valid?
+        # puts @order.est_price
+        response = GopayService.use(@current_user, @order.est_price)
+        # if response[:Status] == 'OK'
+        #   @current_user.update(gopay: response[:Account]["Amount"])
+        #   true
+        # else
+        #   flash.now[:alert] = response[:Status]
+        #   false
+        # end
+      # else
+      #   false
+      # end
     end
 end

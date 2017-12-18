@@ -8,7 +8,7 @@ class Order < ApplicationRecord
 
   enum payment_type: {
     "Cash" => "Cash",
-    "Go Pay" => "Go Pay",
+    "Go-Pay" => "Go-Pay",
     "Credit Card" => "Credit Card"
   }
 
@@ -22,6 +22,7 @@ class Order < ApplicationRecord
   validate :destination_must_be_different_than_origin
   validate :locations_must_exist
   validate :distance_cannot_exceed_max_allowed, :distance_matrix_valid
+  validate :est_price_cannot_exceed_gopay, if: ->(obj){ obj.payment_type == 'Go-Pay' }
   before_save :capitalize_names
 
   private
@@ -91,6 +92,12 @@ class Order < ApplicationRecord
     def distance_matrix_valid
       if !self.distance.nil? && self.distance < 0
         errors.add(:base, "Invalid address(s)")
+      end
+    end
+
+    def est_price_cannot_exceed_gopay
+      if self.est_price > user.gopay
+        errors.add(:base, "Insufficient amount of Go-Pay")
       end
     end
 end

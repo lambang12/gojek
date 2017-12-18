@@ -17,8 +17,10 @@ Rails.application.routes.draw do
   end
 
   controller :gopay do
-    get 'gopay/register' => :new
-    post 'gopay/register' => :create
+    # get 'gopay/register' => :new
+    # post 'gopay/register' => :create
+    get 'topup' => :topup
+    post 'topup' => :set_topup
   end
   
   namespace :api, defaults: { format: 'json' } do

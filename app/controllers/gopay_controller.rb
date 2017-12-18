@@ -1,25 +1,40 @@
 class GopayController < ApplicationController
-  def new
-    @user = @current_user
-  end
+  # def new
+  #   @user = @current_user
+  # end
   
-  def create
-    response = GopayService.register_gopay(params)
+  # def create
+  #   response = GopayService.register_gopay(params)
+  #   if response[:Status] == 'OK'
+  #     redirect_to user_path, notice: 'You can start using gopay service now'
+  #   else
+  #     flash.now[:alert] = response[:Status]
+  #     render :new
+  #   end
+  # end
+
+  def topup
+  end
+
+  def set_topup
+    response = GopayService.topup(@current_user, params[:amount])
     if response[:Status] == 'OK'
-      redirect_to user_path, notice: 'You can start using gopay service now'
+      @current_user.update(gopay: response[:Account]["Amount"])
+      redirect_to user_path, notice: 'Successfully topup Go-Pay'
     else
       flash.now[:alert] = response[:Status]
-      render :new
+      render :topup
     end
   end
 
-  def update
-    response = UserService.update(user_params, session[:token])
-    if response[:status] == 'OK'
-      redirect_to user_index_path, notice: response[:message]
+  def use_gopay
+    response = GopayService.user(@current_user, params[:amount])
+    if response[:Status] == 'OK'
+      @current_user.update(gopay: response[:Account]["Amount"])
+      true
     else
-      flash.now[:alert] = response[:message]
-      redirect_to user_edit_path
+      flash.now[:alert] = response[:Status]
+      false
     end
   end
 end
