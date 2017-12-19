@@ -11,6 +11,7 @@ class User < ApplicationRecord
   validates :password, presence: true, on: :create
   validates :password, length: { minimum: 8 }, allow_blank: true
   validates :gopay, numericality: { greater_than_or_equal_to: 0 }
+  # validate :check_in_other_service
 
   before_save :capitalize_names
 
@@ -19,4 +20,5 @@ class User < ApplicationRecord
       first_name.capitalize!
       last_name.capitalize!
     end
+
 end
