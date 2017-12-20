@@ -2,7 +2,8 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
 
   def index
-    @orders = @current_user.orders.all.decorate
+    orders = @current_user.orders.all.paginate(page: params[:page], per_page: 10)
+    @orders = OrderDecorator.decorate_collection(orders)
   end
 
   def show

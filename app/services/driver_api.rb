@@ -9,6 +9,6 @@ class DriverApi
       }
     }
     response = HTTParty.post("#{BASE_URI}check_user", opts)
-    RequestResponse.json_to_hash(response)
+    RequestResponse.json_to_hash(response.body)
   end
 end

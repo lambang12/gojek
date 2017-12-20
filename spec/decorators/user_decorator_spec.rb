@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe OrderDecorator, :type => [:decorator, :helper] do
+RSpec.describe UserDecorator, :type => [:decorator, :helper] do
 
   let(:first_name)  { 'John'  }
   let(:last_name)  { 'Smith' }

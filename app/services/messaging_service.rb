@@ -22,7 +22,7 @@ class MessagingService
     begin
       consumer.each do |message|
         puts "Message received: #{message}"
-        details = JSON.parse(message.payload)
+        details = RequestResponse.json_to_hash(message.payload)
         ::AllocationService.allocate_driver_to_order(details)
       end
     rescue Rdkafka::RdkafkaError => e

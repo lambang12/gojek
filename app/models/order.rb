@@ -22,7 +22,7 @@ class Order < ApplicationRecord
   validates_with OrderValidator, if: :new_record?
 
   before_save :capitalize_names
-  after_save :update_gopay, :publish_order, unless: :skip_callbacks
+  after_save :pay_with_gopay, :publish_order, unless: :skip_callbacks
 
   def self.find_5_minutes_initialized
     orders = Order.where("status = 'Initialized'")
@@ -91,7 +91,7 @@ class Order < ApplicationRecord
     def publish_order
       if self.status == "Initialized"
         MessagingService.produce_order(self)
-      elsif self.status = "Cancelled by System"
+      elsif self.status == "Cancelled by System"
         MessagingService.produce_order_cancellation(self)
       end
     end

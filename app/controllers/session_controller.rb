@@ -1,6 +1,7 @@
 class SessionController < ApplicationController
   before_action :non_session_only, except: :destroy
   skip_before_action :authorize, except: :destroy
+
   def new
   end
 

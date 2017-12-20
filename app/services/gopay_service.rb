@@ -1,11 +1,11 @@
-module GopayService
+class GopayService
   BASE_URI = 'http://localhost:8080/'
 
   def self.register_gopay(user)
     opts = set_params(user)
     response = HTTParty.post(BASE_URI, opts)
     puts response.body
-    RequestResponse.json_to_hash(response)
+    RequestResponse.json_to_hash(response.body)
   end
 
   def self.topup(user, amount)
@@ -13,14 +13,14 @@ module GopayService
     opts = set_params(user, amount)
     response = HTTParty.put("#{BASE_URI}topup", opts)
     puts response.body
-    RequestResponse.json_to_hash(response)
+    RequestResponse.json_to_hash(response.body)
   end
 
   def self.use(user, amount)
     opts = set_params(user, amount)
     response = HTTParty.put(BASE_URI, opts)
     puts response.body
-    RequestResponse.json_to_hash(response)
+    RequestResponse.json_to_hash(response.body)
   end
 
   def self.set_params(*params)

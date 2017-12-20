@@ -1,6 +1,6 @@
 class RequestResponse
   def self.json_to_hash(response)
-    hash_response = JSON.parse(response.body).symbolize_keys
+    hash_response = JSON.parse(response).symbolize_keys
     deep_symbolize_keys(hash_response)
   end
 

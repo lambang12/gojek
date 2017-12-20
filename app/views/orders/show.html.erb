@@ -26,7 +26,29 @@
         <th>Distance</th>
         <td><%= @order.distance_in_km %></td>
         <th>Driver</th>
-        <td><%= %></td>
+        <td class="dropdown orders-menu">
+          <%= @order.driver.try(:full_name) %>
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            Contact
+          </a>
+          <ul class="dropdown-menu">
+            <li class="header">
+              Driver Contact
+            </li>
+            <li>
+              <ul class="menu">
+                <li>
+                <i class="ion ion-ios-people info">
+                </i>Phone: <%= @order.driver.try(:phone) %>
+                </li>
+                <li>
+                <i class="ion ion-ios-people info">
+                </i>License: <%= @order.driver.try(:license_plate) %>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </td>
       </tr>
     </table>
     <%= link_to 'Back', orders_path, class: "btn btn-success" %>
