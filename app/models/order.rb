@@ -8,8 +8,7 @@ class Order < ApplicationRecord
 
   enum payment_type: {
     "Cash" => "Cash",
-    "Go-Pay" => "Go-Pay",
-    "Credit Card" => "Credit Card"
+    "Go-Pay" => "Go-Pay"
   }
 
   belongs_to :user
@@ -26,7 +25,7 @@ class Order < ApplicationRecord
 
   def self.find_5_minutes_initialized
     orders = Order.where("status = 'Initialized'")
-    orders.select { |o| (Time.now - o.created_at) > 300 }  
+    orders.select { |o| (Time.now - o.created_at) > RulesService::ORDER_TIME_OUT }  
   end
 
   private
@@ -76,14 +75,14 @@ class Order < ApplicationRecord
 
     def update_gopay
       if self.status == "Initialized"
-        response = GopayService.use(user, self.est_price)
+        response = GopayService.use(user, self.est_price, self)
       elsif self.status == "Cancelled by System"
-        response = GopayService.topup(user, self.est_price)
+        response = GopayService.topup(user, self.est_price, self)
       end
 
-      if response[:Status] == 'OK'
-        user.update(gopay: response[:Account][:Amount])
-      else
+      if !response.nil? && response[:status] == 'OK'
+        user.update(gopay: response[:account][:amount])
+      elsif !response.nil?
         self.update_columns(status: "Cancelled by System", updated_at: Time.now)
       end
     end

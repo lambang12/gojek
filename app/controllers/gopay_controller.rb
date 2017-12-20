@@ -4,23 +4,12 @@ class GopayController < ApplicationController
 
   def set_topup
     response = GopayService.topup(@current_user, params[:amount])
-    if response[:Status] == 'OK'
-      @current_user.update(gopay: response[:Account][:Amount])
+    if response[:status] == 'OK'
+      @current_user.update(gopay: response[:account][:amount])
       redirect_to user_path, notice: 'Successfully topup Go-Pay'
     else
-      flash.now[:alert] = response[:Status]
+      flash.now[:alert] = response[:status]
       render :topup
     end
   end
-
-  # def use_gopay
-  #   response = GopayService.use(@current_user, params[:amount])
-  #   if response[:Status] == 'OK'
-  #     @current_user.update(gopay: response[:Account]["Amount"])
-  #     true
-  #   else
-  #     flash.now[:alert] = response[:Status]
-  #     false
-  #   end
-  # end
 end
