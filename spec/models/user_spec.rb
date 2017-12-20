@@ -113,11 +113,6 @@ describe User do
   end
 
   describe 'relation' do
-    it 'should have many orders' do
-      user = create(:user)
-      order1 = create(:order, user: user)
-      order2 = create(:order, user: user)
-      expect(user.orders).to match_array([order1, order2])
-    end
+    it { should have_many(:orders) }
   end
 end

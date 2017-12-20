@@ -1,13 +1,14 @@
-class DriverService
+class DriverApi
   BASE_URI = 'http://localhost:3001/api/v1/'
 
-  def self.user_exists?(params)
-    puts "posting #{params}"
+  def self.send_check_request(user)
     opts = {
-      body: params
+      body: {
+        email: user.email,
+        phone: user.phone
+      }
     }
     response = HTTParty.post("#{BASE_URI}check_user", opts)
-    puts response.body
     RequestResponse.json_to_hash(response)
   end
 end

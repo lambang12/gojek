@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Order, type: :model do
+  it 'includes Validations' do
+    expect(Order.ancestors.include? ActiveModel::Validations).to eq(true)
+  end
+
   it 'has a valid factory' do
     expect(build(:order)).to be_valid
   end
@@ -70,12 +74,12 @@ RSpec.describe Order, type: :model do
     context 'with valid address' do
       let!(:order) { create(:order, origin: 'Kolla Space Sabang', destination: 'Grand Indonesia') }
 
-      it 'saves latitudes in the database' do
-        expect(order.origin_latitude.class).to eq(Float)
+      it 'saves origin coordinates in the database' do
+        expect(order.origin_coordinates.class).to eq(String)
       end
 
-      it 'saves longitudes in the database' do
-        expect(order.destination_longitude.class).to eq(Float)
+      it 'saves destination coordinates in the database' do
+        expect(order.destination_coordinates.class).to eq(String)
       end
     end
 
@@ -88,7 +92,32 @@ RSpec.describe Order, type: :model do
     end
   end
 
+  describe 'calculating distance' do
+    it 'is invalid if no routes available from gmaps' do
+      order = build(:order, origin: 'Kolla', destination: 'Pasaraya Blok M')
+      order.valid?
+      expect(order.errors[:base]).to include("Route between places not found")
+    end
+  end
+
   describe 'using Go-Pay' do
-    skip
+    it 'is valid with sufficient balance' do
+      user = create(:user, gopay: 100000)
+      order = build(:order, payment_type: "Go-Pay", user: user)
+      expect(order).to be_valid
+    end
+
+    it 'is invalid with insufficient balance' do
+      user = create(:user, gopay: 100)
+      order = build(:order, payment_type: "Go-Pay", user: user)
+      order.valid?
+      expect(order.errors[:base]).to include("Insufficient amount of Go-Pay")
+    end
+  end
+
+  describe 'relations' do
+    it { should belong_to(:user) }
+    it { should belong_to(:type) }
+    it { should belong_to(:driver) }
   end
 end

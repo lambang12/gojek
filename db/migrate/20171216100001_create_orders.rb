@@ -10,10 +10,8 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.float :rating
       t.text :comment
       t.string :payment_type
-      t.float :origin_latitude
-      t.float :origin_longitude
-      t.float :destination_latitude
-      t.float :destination_longitude
+      t.string :origin_coordinates
+      t.string :destination_coordinates
       t.references :type
       t.references :user
       t.references :driver

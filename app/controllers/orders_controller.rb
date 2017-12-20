@@ -15,43 +15,25 @@ class OrdersController < ApplicationController
   def create
     @order = Order.new(order_params)
     @order.user = @current_user
-
-    # TODO if insufficient amount of gopay?????????
     
-
-    respond_to do |format|
-      if @order.save
-        if @order.payment_type == "Go-Pay"
-          pay_with_gopay
-        end
-        MessagingService.produce_order(@order)
-        format.html { redirect_to @order.decorate, notice: 'Order was successfully created.' }
-        format.json { render :show, status: :created, location: @order }
-      else
-        format.html { render :new }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
-      end
+    if @order.save
+      redirect_to @order.decorate, notice: 'Order was successfully created.' 
+    else
+      render :new
     end
   end
 
   def update
-    respond_to do |format|
-      if @order.update(order_params)
-        format.html { redirect_to @order, notice: 'Order was successfully updated.' }
-        format.json { render :show, status: :ok, location: @order }
-      else
-        format.html { render :edit }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
-      end
+    if @order.update(order_params)
+      redirect_to @order, notice: 'Order was successfully updated.'
+    else
+      render :edit
     end
   end
 
   def destroy
     @order.destroy
-    respond_to do |format|
-      format.html { redirect_to orders_url, notice: 'Order was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to orders_url, notice: 'Order was successfully destroyed.'
   end
 
   private
@@ -61,21 +43,5 @@ class OrdersController < ApplicationController
 
     def order_params
       params.require(:order).permit(:origin, :destination, :type_id, :payment_type, :status)
-    end
-
-    def pay_with_gopay
-      # if @order.valid?
-        # puts @order.est_price
-        response = GopayService.use(@current_user, @order.est_price)
-        # if response[:Status] == 'OK'
-        #   @current_user.update(gopay: response[:Account]["Amount"])
-        #   true
-        # else
-        #   flash.now[:alert] = response[:Status]
-        #   false
-        # end
-      # else
-      #   false
-      # end
     end
 end

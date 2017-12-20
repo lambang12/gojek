@@ -3,11 +3,8 @@ class Gmaps
 
   def self.to_coordinates(address)
     geocodes = GMAPS.geocode(address)
-    coordinates = {}
-    coordinates = {
-      lat: geocodes[0][:geometry][:location][:lat],
-      lng: geocodes[0][:geometry][:location][:lng]
-    } unless geocodes.empty?
+    coordinates = []
+    coordinates = [geocodes[0][:geometry][:location][:lat], geocodes[0][:geometry][:location][:lng]] unless geocodes.empty?
   end
 
   def self.distance_in_km(origin, destination)

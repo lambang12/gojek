@@ -16,36 +16,18 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    respond_to do |format|
-      if @user.valid? && check_in_other_service(@user)
-        # MessagingService.produce_user(@user)
-        GopayService.register_gopay(@user)
-        format.html { redirect_to login_path, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
-      else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.save
+      redirect_to login_path, notice: 'Registration success.'
+    else
+      render :new
     end
   end
 
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to user_path, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
+    if @user.update(user_params)
+      redirect_to user_path, notice: 'Profile updated.'
+    else
+      render :edit
     end
   end
 
@@ -56,16 +38,5 @@ class UsersController < ApplicationController
 
     def user_params
       params.require(:user).permit(:email, :phone, :first_name, :last_name, :password, :password_confirmation)
-    end
-
-    def check_in_other_service(user)
-      response = DriverService.user_exists?(user_params)
-      puts response[:user_exists]
-      if response[:user_exists]
-        user.errors.add(:base, "This user has been registered to other service")
-        false
-      else
-        true
-      end
     end
 end
