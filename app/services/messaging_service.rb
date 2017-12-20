@@ -1,4 +1,4 @@
-module MessagingService
+class MessagingService
   def self.produce_order(order)
     topic = "#{RdKafka::TOPIC_PREFIX}orders"
     producer = RdKafka.producer({ "group.id": "orders0" })
@@ -10,8 +10,6 @@ module MessagingService
         payload: message,
         key:     "Key #{order.id}"
     ).wait
-    # sleep(2.minutes)
-    # AllocationService.cancelled_if_not_allocated(order)
   end
 
   def self.consume_driver_allocation
@@ -24,26 +22,13 @@ module MessagingService
     begin
       consumer.each do |message|
         puts "Message received: #{message}"
-        details = JSON.parse(message.payload)
+        details = RequestResponse.json_to_hash(message.payload)
         ::AllocationService.allocate_driver_to_order(details)
       end
     rescue Rdkafka::RdkafkaError => e
       retry if e.is_partition_eof?
       raise
     end
-  end
-
-  def self.produce_user(user)
-    topic = "#{RdKafka::TOPIC_PREFIX}users"
-    producer = RdKafka.producer({ "group.id": "users0" })
-
-    message = user.to_json
-    puts "Producing message #{message}"
-    producer.produce(
-        topic:   topic,
-        payload: message,
-        key:     "Key #{user.id}"
-    ).wait
   end
 
   def self.produce_order_cancellation(order)

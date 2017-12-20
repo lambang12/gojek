@@ -1,12 +1,21 @@
-<%= form_tag() do %>
-  <fieldset>
-    <div class="field">
-      <%= label_tag :amount %>
-      <%= text_field_tag :amount %>
-    </div>
-
-    <div class="actions">
-      <%= submit_tag %>
-    </div>
-  </fieldset>
+<% if flash[:alert] %>
+  <div class="alert alert-warning mid-text"><p id='notice'><%= flash[:alert] %></p></div>
 <% end %>
+<% if notice %>
+  <div class="alert alert-info mid-text"><p id='notice'><%= notice %></p></div>
+<% end %>
+<h1>Top Up Go-Pay</h1>
+<div class="col-md-6">
+  <%= form_tag({}, class:"form-horizontal") do %>
+    <fieldset>
+      <div class="form-group">
+        <%= label_tag :amount %>
+        <%= text_field_tag :amount, params[:amount], class: 'form-control' %>
+      </div>
+
+      <div class="actions">
+        <%= submit_tag("Top Up", class: "btn btn-success btn-block btn-flat") %>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

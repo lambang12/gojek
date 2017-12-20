@@ -41,21 +41,6 @@ RSpec.describe Type, type: :model do
   end
 
   describe "relations" do
-    before :each do
-      @type = create(:type)
-    end
-    # it { should have_many(:drivers) }
     it { should have_many(:orders) }
-    # it 'should have many drivers' do
-    #   driver1 = create(:driver, type: @type)
-    #   driver2 = create(:driver, type: @type)
-    #   expect(@type.drivers).to match_array([driver1, driver2])
-    # end
-
-    it 'should have many orders' do
-      order1 = create(:order, type: @type)
-      order2 = create(:order, type: @type)
-      expect(@type.orders).to match_array([order1, order2])
-    end
   end
 end

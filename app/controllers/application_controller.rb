@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
+  include ExceptionHandler
   before_action :authorize
   protect_from_forgery with: :null_session
 

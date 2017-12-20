@@ -1,27 +1,26 @@
 class Api::V1::OrdersController < ApplicationController
   skip_before_action :authorize
-  before_action :set_order, only: [:show, :update, :destroy]
-
-  def update
-    unless @order.status == "Cancelled by System"
-      if @order.update(order_params)
-        @order.status = 'Finished'
-        @order.save
-        AllocationService.update_order(@order)
-        #TODO update driver's order to Finished
-      else
-        render json: @order
-        #TODO update driver's order to Cancelled by System
-      end
+  def allocate
+    order = Order.find(params[:order_id])
+    if params[:status] == 'OK'
+      driver = Driver.find_or_create_by(external_id: params[:driver][:id], 
+        full_name: "#{params[:driver][:first_name]} #{params[:driver][:last_name]}")
+      driver.update(phone: params[:driver][:phone], license_plate: params[:driver][:license_plate])
+      order.update(status: 'Driver Assigned', driver: driver)
+    else
+      order.update(status: 'Cancelled by System')
     end
+
+    render json: {}
+    # if @order.update(order_params)
+    #   redirect_to @order, notice: 'Order was successfully updated.'
+    # else
+    #   render :edit
+    # end
   end
 
   private
-    def set_order
-      @order = Order.find(params[:id]).decorate
-    end
-
     def order_params
-      params.require(:order).permit(:status, :driver_id)
+      params.permit(:order_id, :driver, :status)
     end
 end

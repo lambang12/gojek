@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   end
 
   resources :orders
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   controller :session do
     get 'login' => :new
@@ -17,16 +16,20 @@ Rails.application.routes.draw do
   end
 
   controller :gopay do
-    # get 'gopay/register' => :new
-    # post 'gopay/register' => :create
     get 'topup' => :topup
     post 'topup' => :set_topup
   end
   
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
-      resources :orders
+      controller :orders do
+        post 'allocate' => :allocate
+      end
+      controller :users do
+        post 'check_user' => :check_if_exists
+      end
     end
   end
+  
   root 'dashboard#index', as: 'index'
 end

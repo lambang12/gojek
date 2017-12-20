@@ -1,6 +1,9 @@
 <% if flash[:alert] %>
   <div class="alert alert-warning mid-text"><p id='notice'><%= flash[:alert] %></p></div>
 <% end %>
+<% if notice %>
+  <div class="alert alert-info mid-text"><p id='notice'><%= notice %></p></div>
+<% end %>
 
 <div class="login-box" style="background-color: #5bb641">
   <div class="login-logo">
@@ -30,17 +33,9 @@
       </div>
     <% end %>
 
-    <div class="social-auth-links text-center">
-      <p>- OR -</p>
-      <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
-        Facebook</a>
-      <a href="#" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign in using
-        Google+</a>
-    </div>
-    <!-- /.social-auth-links -->
-
     <%= link_to 'Register new membership', new_user_path %>
 
   </div>
   <!-- /.login-box-body -->
 </div>
+

@@ -8,8 +8,7 @@ class Order < ApplicationRecord
 
   enum payment_type: {
     "Cash" => "Cash",
-    "Go-Pay" => "Go-Pay",
-    "Credit Card" => "Credit Card"
+    "Go-Pay" => "Go-Pay"
   }
 
   belongs_to :user
@@ -19,51 +18,23 @@ class Order < ApplicationRecord
   before_validation :set_base_attributes, :set_calculation_attributes, if: :new_record?
 
   validates :origin, :destination, :payment_type, presence: true
-  validate :destination_must_be_different_than_origin
-  validate :locations_must_exist
-  validate :distance_cannot_exceed_max_allowed, :distance_matrix_valid
-  validate :est_price_cannot_exceed_gopay, if: ->(obj){ obj.payment_type == 'Go-Pay' }
+  validates_with OrderValidator, if: :new_record?
+
   before_save :capitalize_names
+  after_save :pay_with_gopay, :publish_order, unless: :skip_callbacks
+
+  def self.find_5_minutes_initialized
+    orders = Order.where("status = 'Initialized'")
+    orders.select { |o| (Time.now - o.created_at) > RulesService::ORDER_TIME_OUT }  
+  end
 
   private
-    def capitalize_names
-      origin.capitalize!
-      destination.capitalize!
-    end
-
     def set_base_attributes
       self.status = "Initialized"
       self.base_fare = type.base_fare unless type.nil?
 
-      origin_coordinates = Gmaps.to_coordinates(origin) unless origin.nil? || origin.empty?
-      destination_coordinates = Gmaps.to_coordinates(destination) unless destination.nil? || destination.empty?
-      
-      unless origin_coordinates.nil? || origin_coordinates.empty?
-        self.origin_latitude = origin_coordinates[:lat]
-        self.origin_longitude = origin_coordinates[:lng]
-      end
-
-      unless destination_coordinates.nil? || destination_coordinates.empty?
-        self.destination_latitude = destination_coordinates[:lat]
-        self.destination_longitude = destination_coordinates[:lng]
-      end
-    end
-
-    def destination_must_be_different_than_origin
-      if origin == destination
-        errors.add(:origin, "must be different with pickup location")
-        errors.add(:destination, "must be different with pickup location")
-      end
-    end
-
-    def locations_must_exist
-      if origin_latitude.nil? || origin_longitude.nil?
-        errors.add(:origin, "address not found")
-      end
-
-      if destination_latitude.nil? || destination_longitude.nil?
-        errors.add(:destination, "address not found")
-      end
+      self.origin_coordinates = to_coordinates(origin)
+      self.destination_coordinates = to_coordinates(destination)
     end
 
     def set_calculation_attributes
@@ -74,8 +45,7 @@ class Order < ApplicationRecord
     end
 
     def geocoder_attributes_exist?
-      !origin_latitude.nil? && !origin_longitude.nil? &&
-      !destination_latitude.nil? && !destination_longitude.nil?
+      !origin_coordinates.blank? && !destination_coordinates.blank?
     end
 
     def calculate_distance
@@ -83,21 +53,45 @@ class Order < ApplicationRecord
       distance = distance.between?(0, 1) ? 1 : distance
     end
 
-    def distance_cannot_exceed_max_allowed
-      if !self.distance.nil? && self.distance > RulesService::MAX_DISTANCE_ALLOWED
-        errors.add(:destination, "distance cannot exceed 25 km")
+    def capitalize_names
+      origin.capitalize!
+      destination.capitalize!
+    end
+
+    def to_coordinates(attr)
+      coord = Gmaps.to_coordinates(attr) if !attr.blank?
+      coord = !coord.nil? ? coord.join(" ") : nil
+    end
+
+    def pay_with_gopay
+      if self.payment_type == "Go-Pay"
+        begin
+          update_gopay
+        rescue Errno::ECONNREFUSED => e
+          self.update_columns(status: "Cancelled by System", updated_at: Time.now)
+        end
       end
     end
 
-    def distance_matrix_valid
-      if !self.distance.nil? && self.distance < 0
-        errors.add(:base, "Invalid address(s)")
+    def update_gopay
+      if self.status == "Initialized"
+        response = GopayService.use(user, self.est_price, self)
+      elsif self.status == "Cancelled by System"
+        response = GopayService.topup(user, self.est_price, self)
+      end
+
+      if !response.nil? && response[:status] == 'OK'
+        user.update(gopay: response[:account][:amount])
+      elsif !response.nil?
+        self.update_columns(status: "Cancelled by System", updated_at: Time.now)
       end
     end
 
-    def est_price_cannot_exceed_gopay
-      if self.est_price > user.gopay
-        errors.add(:base, "Insufficient amount of Go-Pay")
+    def publish_order
+      if self.status == "Initialized"
+        MessagingService.produce_order(self)
+      elsif self.status == "Cancelled by System"
+        MessagingService.produce_order_cancellation(self)
       end
     end
 end

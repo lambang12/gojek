@@ -1,5 +1,4 @@
 class Type < ApplicationRecord
-  # has_many :drivers
   has_many :orders
   validates :name, :base_fare, presence: true
   validates :name, uniqueness: { case_sensitive: false }

@@ -1,12 +1,12 @@
 class SessionController < ApplicationController
   before_action :non_session_only, except: :destroy
   skip_before_action :authorize, except: :destroy
+
   def new
   end
 
   def create
-    user = User.find_by("email = :login or phone = :login",
-      login: params[:login])
+    user = User.find_by("email = :login or phone = :login", login: params[:login])
 
     if user.try(:authenticate, params[:password])
       session[:gojek_user_id] = user.id

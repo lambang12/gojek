@@ -1,38 +1,27 @@
-module AllocationService
-  BASE_URI = 'http://localhost:3001/'
-
+class AllocationService
   def self.allocate_driver_to_order(params)
-    order = Order.find(params["order_id"])
-    if params["status"] == 'OK'
-      puts params["driver"]["id"]
-      driver = Driver.find_or_create_by(external_id: params["driver"]["id"], full_name: params["driver"]["first_name"])
+    order = Order.find(params[:order_id])
+    if params[:status] == 'OK'
+      driver = Driver.find_or_create_by(external_id: params[:driver][:id], 
+        full_name: "#{params[:driver][:first_name]} #{params[:driver][:last_name]}")
+      driver.update(phone: params[:driver][:phone], license_plate: params[:driver][:license_plate])
       order.update(status: 'Driver Assigned', driver: driver)
     else
-      if order.payment_type == 'Go-Pay'
-        response = GopayService.topup(order.user, order.est_price)
-      end
-      puts order.status
       order.update(status: 'Cancelled by System')
-      order.reload
-      puts order.status
     end
   end
 
-  def self.update_order(params)
-    opts =  {
-      body: params
-    }
-    response = HTTParty.put("#{BASE_URI}orders", opts)
-    RequestResponse.json_to_hash(response)
-  end
-
+  # def self.update_order(params)
+  #   opts =  {
+  #     body: params
+  #   }
+  #   response = HTTParty.put("#{BASE_URI}orders", opts)
+  #   RequestResponse.json_to_hash(response.body)
+  # end
 
   def self.find_initialized_orders
-    #Please try using querying from model. It should not be in decorator or somewhere else. you should write this in model only. Let me know if this works.
     begin
-      puts 'find Initialized orders'
-      orders = Order.where("status = 'Initialized'")
-      cancels = orders.select { |o| (Time.now - o.created_at) > 300 }
+      cancels = Order.find_5_minutes_initialized
       cancelled_if_not_allocated(cancels)
     ensure
       ActiveRecord::Base.connection_pool.release_connection
@@ -43,12 +32,10 @@ module AllocationService
     orders.each do |order|
       order.reload
       if order.status == "Initialized"
-        order.update(status: 'Cancelled by System')
-        if order.payment_type == 'Go-Pay'
-          puts "Cancelled #{order.id} #{order.user.first_name}"
-          response = GopayService.topup(order.user, order.est_price)
+        unless order.update(status: 'Cancelled by System')
+          puts order.errors.to_s
+          puts order.errors.to_a
         end
-        MessagingService.produce_order_cancellation(order)
       end
     end
   end
