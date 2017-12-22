@@ -5,25 +5,48 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-Type.create!(
+# User.delete_all
+# Type.delete_all
+
+# Type.create!(
+#   [
+#     {
+#       name: "Go-Ride",
+#       base_fare: 1500.0
+#     },
+#     {
+#       name: "Go-Car",
+#       base_fare: 2500.0
+#     }
+#   ]
+# )
+
+
+User.create!(
   [
     {
-      name: "Go-Ride",
-      base_fare: 1500.0
+      email: "potter@gryff.com", 
+      first_name: "Harry", 
+      last_name: "Potter", 
+      password: 'password', 
+      password_confirmation:'password',
+      phone:'08117878789'
     },
     {
-      name: "Go-Car",
-      base_fare: 2500.0
+      email: "granger@gryff.com", 
+      first_name: "Hermione", 
+      last_name: "Granger", 
+      password: 'password', 
+      password_confirmation:'password',
+      phone:'08765657657'
+    },
+    {
+      email: "weasley6@gryff.com", 
+      first_name: "Ronald", 
+      last_name: "Weasley", 
+      password: 'password', 
+      password_confirmation:'password',
+      phone:'0867686689'
     }
   ]
 )
-
-
-# User.create!(
-#   email: "ajeng@gmail.com", 
-#   first_name: "ajeng", 
-#   last_name: "sugiarti", 
-#   password: 'password', 
-#   password_confirmation:'password',
-#   phone:'0811'
-# )
